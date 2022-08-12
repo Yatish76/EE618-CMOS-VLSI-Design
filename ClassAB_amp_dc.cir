@@ -1,0 +1,143 @@
+*SPICE (flattened) circuit "ClassAB" from XCircuit v3.4 rev 10
+******* Include Model file*******
+.include cmos_130nm.txt 
+.include bias_ckt.sub
+**********************************************************
+**********parameters**************************************
+*diff pair
+.param W1 = 80u
+.param L1 = 200n
+.param W3 = 80u
+.param L3 = 200n
+.param W5 = 180u
+.param L5 = 200n
+.param W7 = 180u
+.param L7 = 200n
+**Ib1
+.param Wn4 = 2070u
+.param Ln4 = 1u
+**2nd stage
+*M11,12
+.param Wn2 = 280u
+.param Ln2 = 200n
+*Mb3r,b3l
+.param Wn3 = 690u
+.param Ln3 = 1u
+*M9,10
+.param Wp2 = 280u
+.param Lp2 = 200n
+*M13,14
+.param Wp3 = 80u
+.param Lp3 = 200n
+
+**********************************************************
+********* Circuit Description*****************************
+V1 Vdd GND 1.5
+V2 Vin_p CM DC 0 AC 1
+V3 Vin_n CM DC 0
+V4 CM GND DC 0.75
+XB Vb1 Vb2 Vb3 Vbi Vdd GND bias
+
+**central diff pair - stage 1*********************
+
+*pmos*
+M5 Vo1_p Vb2 vl1 vl1 pmos W=W5 L=L5
+M6 Vo1_n Vb2 vr1 vr1 pmos W=W5 L=L5
+M7 vl1 cmfb1 Vdd Vdd pmos W=W7 L=L7
+M8 vr1 cmfb1 Vdd Vdd pmos W=W7 L=L7
+
+*r1 and r2
+R1 Vo1_p cmfb1 10Meg
+R2 cmfb1 Vo1_n 10Meg
+
+*nmos input part
+M3 Vo1_p Vb1 vl0 GND nmos W=W3 L=L3
+M4 Vo1_n Vb1 vr0 GND nmos W=W3 L=L3
+M1 vl0 Vin_p Vx GND nmos W=W1 L=L1
+M2 vr0 Vin_n Vx GND nmos W=W1 L=L1
+
+*current src Ib1 (gate node to be named)
+Mb1 Vx Vbi GND GND nmos W=Wn4 L=Ln4
+
+***************************************************
+**2nd stage - right part***************************
+Cbr Vo1_n vbr 0.2p
+Rbr Vb3 vbr 20k
+M12 Vout_n vbr GND GND nmos W=Wn2 L=Ln2
+Rzr Vo1_n vzr 28.2k
+Czr vzr Vout_n 1f
+M10 Vout_n Vo1_n VDD VDD pmos W=Wp2 L=Lp2
+M14 Vout_n cmfb2 VDD VDD pmos W=Wp3 L=Lp3
+Clr Vout_n GND 0.5p
+
+*current src Ib3 (gate node to be named)
+Mb3r Vout_n Vbi GND GND nmos W=Wn3 L=Ln3
+
+***************************************************
+**2nd stage - left part***************************
+Cbl Vo1_p vbl 0.2p
+Rbl Vb3 vbl 20k
+M11 Vout_p vbl GND GND nmos W=Wn2 L=Ln2
+Rzl Vo1_p vzl 28.2k
+Czl vzl Vout_p 1f
+M9 Vout_p Vo1_p VDD VDD pmos W=Wp2 L=Lp2
+M13 Vout_p cmfb2 VDD VDD pmos W=Wp3 L=Lp3
+Cll Vout_p GND 0.5p
+*current src Ib3 (gate node to be named)
+Mb3l Vout_p Vbi GND GND nmos W=Wn3 L=Ln3
+
+***************************************************
+**CMFB 2 R3 and R4*********************************
+R3 Vout_p cmfb2 10Meg
+R4 cmfb2 Vout_n 10Meg
+
+*************************************************
+********Analysis******************************
+.control
+************ DC Operating Point****************
+op
+print @Mb1[id]
+print @M1[id]
+print @M2[id]
+print @M3[id]
+print @M4[id]
+print @M5[id]
+print @M6[id]
+print @M7[id]
+print @M8[id]
+print @M9[id]
+print @M10[id]
+print @M11[id]
+print @M12[id]
+print @M13[id]
+print @M14[id]
+print @Mb3r[id]
+print @M1[gm]
+print @M4[gm]
+print @M6[gm]
+print @M8[gm]
+print @M6[gds]
+print @M10[gm]
+print @M12[gm]
+print v(Vl1)
+print v(Vr1)
+print v(Vl0)
+print v(Vr0)
+print v(Vx)
+print v(Vo1_n)
+print v(Vo1_n)
+print v(Vbl)
+print v(Vbr)
+print v(Vzl)
+print v(Vzr)
+print v(Vout_n)
+print v(Vout_p)
+print v(cmfb2)
+print v(cmfb1)
+print v(Vb1)
+print v(Vb2)
+print v(Vb3)
+print v(Vbi)
+*************************************************
+.endc
+.end
